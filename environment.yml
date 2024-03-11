@@ -1,0 +1,22 @@
+name: med_vqa
+channels:
+  - huggingface
+  - pytorch
+  - nvidia
+  - conda-forge
+dependencies:
+  - python=3.10
+  - numpy
+  - scipy
+  - scikit-image
+  - pandas
+  - pytorch::pytorch-cuda=11.8
+  - torchvision
+  - huggingface::datasets
+  - matplotlib
+  - seaborn
+  - notebook
+  - ipykernel
+  - ipywidgets
+  - tqdm
+
