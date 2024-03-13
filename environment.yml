@@ -13,10 +13,15 @@ dependencies:
   - pytorch::pytorch-cuda=11.8
   - torchvision
   - huggingface::datasets
+  - transformers
+  - git+https://github.com/openai/CLIP.git
   - matplotlib
   - seaborn
   - notebook
   - ipykernel
   - ipywidgets
   - tqdm
+  - pip
+  - pip:
+    - git+https://github.com/openai/CLIP.git
 
