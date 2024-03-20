@@ -22,3 +22,6 @@ dependencies:
   - ipywidgets
   - tqdm
   - pip
+  - pip:
+    - git+https://github.com/openai/CLIP.git
+

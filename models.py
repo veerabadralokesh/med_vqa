@@ -14,15 +14,11 @@ class VQAModel(torch.nn.Module):
 
     def __init__(self, image_encoder, text_encoder, text_decoder, device):
         if image_encoder == 'CLIP':
-            # https://huggingface.co/docs/transformers/model_doc/clip
-            preprocess = T.CLIPProcessor.from_pretrained("openai/clip-vit-base-patch32")
-            model = T.CLIPModel.from_pretrained("openai/clip-vit-base-patch32")
-            url = "http://images.cocodataset.org/val2017/000000039769.jpg"
-            image = PIL.Image.open(requests.get(url, stream=True).raw)
-            inputs = processor(text=["a photo of a cat", "a photo of a dog"], images=image, return_tensors="pt", padding=True)
-            outputs = model(**inputs)
-            logits_per_image = outputs.logits_per_image  # this is the image-text similarity score
-            probs = logits_per_image.softmax(dim=1)  # we can take the softmax to get the label probabilities
+            clip_model, preprocess = clip.load('ViT-B/32', device)
+            self.image_preprocess = preprocess
+            self.image_model = clip_model
+            self.image_encoder = lambda image: self.image_model.encode_image(self.image_preprocess(image).unsqueeze(0).to(device))
+            self.clip_text_encoder = clip_model.encode_text
             raise TODO
         else:
             raise TODO
@@ -32,8 +28,17 @@ class VQAModel(torch.nn.Module):
             tokenizer = T.LlamaTokenizer.from_pretrained("meta-llama/llama-2-7b-hf")
             model = T.LlamaForCausalLM.from_pretrained("meta-llama/llama-2-7b-hf")
             raise TODO
+        elif text_encoder == 'CLIP' and image_encoder == 'CLIP':
+            self.text_encoder = self.clip_text_encoder
         else:
             raise TODO
+
+        # self.fusion_module = 
+
+        if text_decoder is not None:
+            raise TODO
+        else:
+            self.text_decoder = torch.nn.Identity
 
         raise TODO
 
@@ -43,3 +48,4 @@ class VQAModel(torch.nn.Module):
         fused_feats = self.fusion_module(image_feats, text_feats)
         answer_logits = self.text_decoder(fused_feats)
         return answer_logits
+
