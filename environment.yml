@@ -15,6 +15,7 @@ dependencies:
   - huggingface::datasets
   - transformers
   - sentencepiece
+  - accelerate
   - matplotlib
   - seaborn
   - notebook
