@@ -10,12 +10,14 @@ dependencies:
   - scipy
   - scikit-image
   - pandas
+  - pillow
   - pytorch::pytorch-cuda=11.8
   - torchvision
   - huggingface::datasets
   - transformers
   - sentencepiece
   - accelerate
+  - gdown
   - matplotlib
   - seaborn
   - notebook
