@@ -15,8 +15,8 @@ dependencies:
   - torchvision
   - huggingface::datasets
   - transformers
+  - peft
   - sentencepiece
-  - accelerate
   - gdown
   - matplotlib
   - seaborn
