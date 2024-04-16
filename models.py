@@ -1,5 +1,11 @@
-import torch
-import clip
+import torch, requests, PIL
+import transformers as T
+
+model_urls = {
+    'CLIP': ...,
+    'LLaMa': ...,
+}
+
 
 TODO = NotImplementedError('TODO')
 
@@ -18,6 +24,9 @@ class VQAModel(torch.nn.Module):
             raise TODO
 
         if text_encoder == 'LLaMA':
+            # https://huggingface.co/docs/transformers/main/en/model_doc/llama
+            tokenizer = T.LlamaTokenizer.from_pretrained("meta-llama/llama-2-7b-hf")
+            model = T.LlamaForCausalLM.from_pretrained("meta-llama/llama-2-7b-hf")
             raise TODO
         elif text_encoder == 'CLIP' and image_encoder == 'CLIP':
             self.text_encoder = self.clip_text_encoder
@@ -39,3 +48,4 @@ class VQAModel(torch.nn.Module):
         fused_feats = self.fusion_module(image_feats, text_feats)
         answer_logits = self.text_decoder(fused_feats)
         return answer_logits
+
