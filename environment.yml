@@ -9,15 +9,17 @@ dependencies:
   - numpy
   - scipy
   - scikit-image
+  - scikit-learn
   - pandas
   - pillow
   - pytorch::pytorch-cuda=11.8
   - torchvision
   - huggingface::datasets
+  - gdown
+  - sentencepiece
   - transformers
   - peft
-  - sentencepiece
-  - gdown
+  - evaluate
   - matplotlib
   - seaborn
   - notebook
@@ -26,5 +28,5 @@ dependencies:
   - tqdm
   - pip
   - pip:
-    - git+https://github.com/openai/CLIP.git
-
+    - open_clip_torch
+    - difflib
