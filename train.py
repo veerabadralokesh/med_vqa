@@ -119,6 +119,7 @@ def training_plot(metrics):
 
 
 def train(
+    out_name: str,
     dataset: str,
     image_encoder: str,
     text_encoder: str,
@@ -126,7 +127,8 @@ def train(
     batch_size: int,
     learning_rate: float,
     num_epochs: int,
-    lora_rank: int
+    lora_rank: int,
+    dry_run: bool
 ):
     timer = Timer()
 
@@ -168,7 +170,8 @@ def train(
     print(f'Testing forward pass...', flush=True)
     images, input_tokens, prompt_mask, answer_mask = next(iter(train_loader))
     output = model.forward(images, input_tokens, prompt_mask)
-    compute_metrics(input_tokens, output_tokens, answer_masks, text_decoder.tokenizer)
+    output_tokens = torch.argmax(output.logits, dim=-1)[:,image_length:]
+    compute_metrics(input_tokens, output_tokens, answer_mask, text_decoder.tokenizer)
     timer.tick()
 
     print(f'Trainable parameters:', end='', flush=True)
@@ -197,6 +200,7 @@ def train(
     metrics_df.set_index(['epoch', 'phase', 'step'], inplace=True)
 
     print('Start training loop')
+
     for epoch in range(num_epochs):
         print(f'Epoch {epoch} / {num_epochs}')
 
@@ -225,9 +229,13 @@ def train(
 
             epoch_train_loss += loss
             pbar.set_description(f'train loss = {loss}')
+
             output.loss.backward()
             optimizer.step()
             optimizer.zero_grad()
+
+            if dry_run:
+                break
 
         epoch_train_loss /= len(train_loader)
         print(f'Epoch {epoch} train loss = {epoch_train_loss}')
@@ -255,6 +263,9 @@ def train(
             epoch_val_loss += loss
             pbar.set_description(f'val loss = {loss}')
 
+            if dry_run:
+                break
+
         epoch_val_loss /= len(val_loader)
         print(f'Epoch {epoch} val loss = {epoch_val_loss}')
 
@@ -270,6 +281,7 @@ def train(
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
+    parser.add_argument('--out_name', type=str, default='ASDF')
     parser.add_argument('--dataset', type=str, default='VQA-RAD')
     parser.add_argument('--image_encoder', type=str, default='CLIP')
     parser.add_argument('--text_encoder', type=str, default=None)
@@ -278,5 +290,6 @@ if __name__ == '__main__':
     parser.add_argument('--learning_rate', type=float, default=1e-5)
     parser.add_argument('--num_epochs', type=int, default=10)
     parser.add_argument('--lora_rank', type=int, default=8)
+    parser.add_argument('--dry_run', type=bool, default=False, action='store_true')
     kwargs = vars(parser.parse_args())
     train(**kwargs)
