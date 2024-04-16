@@ -63,8 +63,8 @@ class TextDecoder(torch.nn.Module):
         elif name == ' LLaVA':
             url = 'liuhaotian/llava-v1.6-vicuna-7b'
         
-        llm = T.LlamaForCausalLM.from_pretrained(url, device_map='auto', cache_dir='models')
-        tokenizer = T.LlamaTokenizer.from_pretrained(url, cache_dir='models')
+        llm = T.LlamaForCausalLM.from_pretrained(url, device_map='auto')
+        tokenizer = T.LlamaTokenizer.from_pretrained(url)
         
         return cls(llm, tokenizer, max_length=512, embed_size=4096)
 
