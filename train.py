@@ -143,7 +143,7 @@ def train(
     image_length = image_encoder.seq_length # number of image tokens
     timer.tick()
 
-    print(f'Loading {text_decoder} text decoder...')
+    print(f'Loading {text_decoder} text decoder...', end='', flush=True)
     text_decoder = models.TextDecoder.from_name(text_decoder)
     text_encoder = text_decoder.llm.model.embed_tokens
     timer.tick()
@@ -167,14 +167,14 @@ def train(
     test_loader = torch.utils.data.DataLoader(test_set, batch_size, shuffle=True)
     timer.tick()
 
-    print(f'Testing forward pass...', flush=True)
+    print(f'Testing forward pass...', end='', flush=True)
     images, input_tokens, prompt_mask, answer_mask = next(iter(train_loader))
     output = model.forward(images, input_tokens, prompt_mask)
     output_tokens = torch.argmax(output.logits, dim=-1)[:,image_length:]
     compute_metrics(input_tokens, output_tokens, answer_mask, text_decoder.tokenizer)
     timer.tick()
 
-    print(f'Trainable parameters:', end='', flush=True)
+    print(f'Trainable parameters:')
     print(f'  before LORA: {count_parameters(model):e} params')
     peft_config = peft.LoraConfig(
         r=lora_rank,
@@ -290,6 +290,6 @@ if __name__ == '__main__':
     parser.add_argument('--learning_rate', type=float, default=1e-5)
     parser.add_argument('--num_epochs', type=int, default=10)
     parser.add_argument('--lora_rank', type=int, default=8)
-    parser.add_argument('--dry_run', type=bool, default=False, action='store_true')
+    parser.add_argument('--dry_run', action='store_true', default=False)
     kwargs = vars(parser.parse_args())
     train(**kwargs)
