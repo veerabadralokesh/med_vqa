@@ -25,6 +25,23 @@ class Timer(object):
 
 
 def compute_metrics(input_tokens, output_tokens, answer_mask, tokenizer):
+    '''
+    Args:
+        input_tokens: (batch_size, seq_length)
+        output_tokens: (batch_size, seq_length)
+        answer_mask: (batch_size, seq_length)
+        tokenizer: tokenizer for input and output tokens
+    Returns:
+        dict mapping metric names to batch mean values
+
+    NOTES:
+    - output_tokens[i,j] is the model output for input_tokens[i,j],
+    so its ground truth label is input_tokens[i,j+1].
+    - answer_mask[i,j] indicates whether input_tokens[i,j] represents
+    an answer token (as opposed to an image or question token)
+    - therefore, answer_mask[i,j+1] indicates whether output_tokens[i,j]
+    is a PREDICTED answer token
+    '''
     batch_size = input_tokens.shape[0]
 
     m = defaultdict(list)
